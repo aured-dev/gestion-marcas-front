@@ -27,6 +27,7 @@ export default function Registro() {
         estado: "A",
       };
       const data = await registrarMarca(nuevaMarca);
+      router.push("/marcas")
     } catch (error: any) {
       alert(error.message || "Error al registrar la marca");
     }

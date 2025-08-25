@@ -15,6 +15,20 @@ export const getMarcas = async () => {
     }
 };
 
+export const getMarca = async (id:number) => {
+    try {
+        const res = await fetch(`${API_URL}/marcas/${id}`, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error("Error al obtener las marcas");
+
+        return await res.json();
+    } catch (error: any) {
+        throw { message: error.message || "Error desconocido" };
+    }
+};
+
 export const registrarMarca = async (data: Marca) => {
     try {
         const res = await fetch(`${API_URL}/marcas`, {

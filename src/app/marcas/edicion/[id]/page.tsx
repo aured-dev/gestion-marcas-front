@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import PrimerPaso from "@/app/components/marcas/registro-edicion/PrimerPaso";
 import SegundoPaso from "@/app/components/marcas/registro-edicion/SegundoPaso";
 import TercerPaso from "@/app/components/marcas/registro-edicion/TercerPaso";
-import { useRouter } from "next/navigation";
-import { actualizarMarca } from "@/app/service/MarcaService";
+import { useRouter, useParams } from "next/navigation";
+import { actualizarMarca, getMarca } from "@/app/service/MarcaService";
 
-export default function Edicion({ id }: { id: string }) {
+export default function Edicion() {
+    const params = useParams();
     const [step, setStep] = useState(1);
+    const id = Number(params.id);
     const router = useRouter();
     const [formData, setFormData] = useState({
         nombre: "",
@@ -21,16 +23,30 @@ export default function Edicion({ id }: { id: string }) {
     const handleActualizar = async (id: number) => {
         try {
             const marcaActualizada: Marca = {
-                nombre: "Marca Editada",
-                titular: "Titular Editado",
+                nombre: formData.nombre,
+                titular: formData.titular,
                 estado: "A",
             };
             const data = await actualizarMarca(id, marcaActualizada);
-
+            router.push("/marcas")
         } catch (error: any) {
             alert(error.message || "Error al editar la marca");
         }
     };
+
+    useEffect(() => {
+        getMarca(id)
+            .then(data => {
+                setFormData({
+                    nombre: data.nombre,
+                    titular: data.titular
+                });
+            })
+            .catch(err => {
+                alert(err.message || "Error al cargar la marca");
+            });
+    }, [id]);
+
 
     return (
         <div className="max-w-2xl mx-auto p-6">
@@ -82,7 +98,7 @@ export default function Edicion({ id }: { id: string }) {
                     </button>
                 ) : (
                     <button
-                        onClick={handleActualizar.bind(null, parseInt(id))}
+                        onClick={() => handleActualizar(id)}
                         className="ml-auto px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
                     >
                         Actualizar
